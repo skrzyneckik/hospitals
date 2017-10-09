@@ -7,15 +7,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import rx.Observable;
-import rx.functions.Func1;
 
 public class HospitalsRepository {
+
+    private static final String SOURCE_URL = "https://data.gov.uk/data/resource/nhschoices/Hospital.csv";
 
     private final OkHttpClient httpClient;
 
@@ -26,7 +25,7 @@ public class HospitalsRepository {
     public Observable<List<Hospital>> hospitals() {
         return Observable
                 .fromCallable(() -> httpClient.newCall(
-                        new Request.Builder().url("https://data.gov.uk/data/resource/nhschoices/Hospital.csv").build())
+                        new Request.Builder().url(SOURCE_URL).build())
                         .execute())
                 .filter(response -> response.isSuccessful())
                 .map(response -> {

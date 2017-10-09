@@ -58,18 +58,18 @@ public class HospitalsScreen extends AppCompatActivity {
 
         subscriptions = new CompositeSubscription();
 
-        Observable<List<Hospital>> hospitals = hospitalsRepository.hospitals()
+        Observable<List<Hospital>> hospitalsObservable = hospitalsRepository.hospitals()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .share();
 
-        subscriptions.add(hospitals
-                .subscribe(hospitals1 -> mAdapter.update(hospitals1),
+        subscriptions.add(hospitalsObservable
+                .subscribe(hospitals -> mAdapter.update(hospitals),
                         throwable -> {
                             //TODO inform user that reading hospital failed
                         }));
 
-        subscriptions.add(hospitals
+        subscriptions.add(hospitalsObservable
                 .compose(HospitalsRepository.odsCodes())
                 .subscribe(codes -> this.osdCodes = codes));
     }
