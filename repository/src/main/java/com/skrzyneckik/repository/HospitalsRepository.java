@@ -2,6 +2,9 @@ package com.skrzyneckik.repository;
 
 import com.skrzyneckik.domain.Hospital;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -36,19 +39,31 @@ public class HospitalsRepository {
                         return response.isSuccessful();
                     }
                 })
-                .map(new Func1<Response, Object>() {
+                .map(new Func1<Response, List<Hospital>>() {
                     @Override
-                    public Object call(Response response) {
-                        return null;
-                    }
-                })
-                .map(new Func1<Object, List<Hospital>>() {
-                    @Override
-                    public List<Hospital> call(Object ignored) {
-                        return Arrays.asList(
-                                new Hospital("Newquay Hospital"),
-                                new Hospital("Bridgewater Hospital")
-                        );
+                    public List<Hospital> call(Response response) {
+                        List<Hospital> hospitals = new ArrayList<>();
+                        try {
+                            String line = "";
+                            BufferedReader br = new BufferedReader(response.body().charStream());
+
+                            //first line includes column names
+                            br.readLine();
+                            while ((line = br.readLine()) != null) {
+
+                                String[] hospitalParams = line.split("\t");
+
+                                if (hospitalParams.length != Hospital.PARAMS_NUMBER) {
+                                    hospitalParams = Arrays.copyOf(hospitalParams, Hospital.PARAMS_NUMBER);
+                                }
+
+                                hospitals.add(new Hospital(hospitalParams));
+                            }
+                            br.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return hospitals;
                     }
                 });
     }
