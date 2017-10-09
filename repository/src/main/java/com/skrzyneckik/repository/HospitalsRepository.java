@@ -25,68 +25,40 @@ public class HospitalsRepository {
 
     public Observable<List<Hospital>> hospitals() {
         return Observable
-                .fromCallable(new Callable<Response>() {
-                    @Override
-                    public Response call() throws Exception {
-                        return httpClient.newCall(
-                                new Request.Builder().url("https://data.gov.uk/data/resource/nhschoices/Hospital.csv").build())
-                                .execute();
-                    }
-                })
-                .filter(new Func1<Response, Boolean>() {
-                    @Override
-                    public Boolean call(Response response) {
-                        return response.isSuccessful();
-                    }
-                })
-                .map(new Func1<Response, List<Hospital>>() {
-                    @Override
-                    public List<Hospital> call(Response response) {
-                        List<Hospital> hospitals = new ArrayList<>();
-                        try {
-                            String line = "";
-                            BufferedReader br = new BufferedReader(response.body().charStream());
+                .fromCallable(() -> httpClient.newCall(
+                        new Request.Builder().url("https://data.gov.uk/data/resource/nhschoices/Hospital.csv").build())
+                        .execute())
+                .filter(response -> response.isSuccessful())
+                .map(response -> {
+                    List<Hospital> hospitals = new ArrayList<>();
+                    try {
+                        String line = "";
+                        BufferedReader br = new BufferedReader(response.body().charStream());
 
-                            //first line includes column names
-                            br.readLine();
-                            while ((line = br.readLine()) != null) {
+                        //first line includes column names
+                        br.readLine();
+                        while ((line = br.readLine()) != null) {
 
-                                String[] hospitalParams = line.split("\t");
+                            String[] hospitalParams = line.split("\t");
 
-                                if (hospitalParams.length != Hospital.PARAMS_NUMBER) {
-                                    hospitalParams = Arrays.copyOf(hospitalParams, Hospital.PARAMS_NUMBER);
-                                }
-
-                                hospitals.add(new Hospital(hospitalParams));
+                            if (hospitalParams.length != Hospital.PARAMS_NUMBER) {
+                                hospitalParams = Arrays.copyOf(hospitalParams, Hospital.PARAMS_NUMBER);
                             }
-                            br.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+
+                            hospitals.add(new Hospital(hospitalParams));
                         }
-                        return hospitals;
+                        br.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                    return hospitals;
                 });
     }
 
     public static Observable.Transformer<List<Hospital>, List<String>> odsCodes() {
-        return new Observable.Transformer<List<Hospital>, List<String>>() {
-            @Override
-            public Observable<List<String>> call(Observable<List<Hospital>> listObservable) {
-                return listObservable.flatMap(new Func1<List<Hospital>, Observable<Hospital>>() {
-                    @Override
-                    public Observable<Hospital> call(List<Hospital> hospitals) {
-                        return Observable.from(hospitals);
-                    }
-                })
-                        .map(new Func1<Hospital, String>() {
-                            @Override
-                            public String call(Hospital hospital) {
-                                return hospital.parentODSCode();
-                            }
-                        })
-                        .distinct()
-                        .toList();
-            }
-        };
+        return listObservable -> listObservable.flatMap(hospitals -> Observable.from(hospitals))
+                .map(hospital -> hospital.parentODSCode())
+                .distinct()
+                .toList();
     }
 }

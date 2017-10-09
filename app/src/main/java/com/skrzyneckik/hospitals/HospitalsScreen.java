@@ -5,7 +5,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import com.skrzyneckik.domain.Hospital;
 import com.skrzyneckik.repository.HospitalsRepository;
@@ -15,7 +14,6 @@ import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
@@ -45,11 +43,8 @@ public class HospitalsScreen extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         mSearchButton = findViewById(R.id.search);
-        mSearchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO show search screen
-            }
+        mSearchButton.setOnClickListener(v -> {
+            //TODO show search screen
         });
 
         hospitalsRepository = new HospitalsRepository();
@@ -69,28 +64,14 @@ public class HospitalsScreen extends AppCompatActivity {
                 .share();
 
         subscriptions.add(hospitals
-                .subscribe(new Action1<List<Hospital>>() {
-                               @Override
-                               public void call(List<Hospital> hospitals) {
-                                   mAdapter.update(hospitals);
-                               }
-                           },
-                        new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                //TODO inform user that reading hospital failed
-                            }
+                .subscribe(hospitals1 -> mAdapter.update(hospitals1),
+                        throwable -> {
+                            //TODO inform user that reading hospital failed
                         }));
 
         subscriptions.add(hospitals
                 .compose(HospitalsRepository.odsCodes())
-                .subscribe(new Action1<List<String>>() {
-                               @Override
-                               public void call(List<String> odsCodes) {
-                                   HospitalsScreen.this.osdCodes = osdCodes;
-                               }
-                           }
-                ));
+                .subscribe(codes -> this.osdCodes = codes));
     }
 
     @Override
