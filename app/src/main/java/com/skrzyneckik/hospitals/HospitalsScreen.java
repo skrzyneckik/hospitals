@@ -3,7 +3,7 @@ package com.skrzyneckik.hospitals;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class Hospitals extends AppCompatActivity {
+public class HospitalsScreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
