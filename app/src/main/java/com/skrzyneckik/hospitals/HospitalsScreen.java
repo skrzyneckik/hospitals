@@ -8,8 +8,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.skrzyneckik.domain.Hospital;
+import com.skrzyneckik.repository.HospitalsRepository;
 
-import java.util.Arrays;
+import java.util.List;
+
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class HospitalsScreen extends AppCompatActivity {
 
@@ -17,6 +23,9 @@ public class HospitalsScreen extends AppCompatActivity {
     private HospitalsAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private FloatingActionButton mSearchButton;
+    private HospitalsRepository hospitalsRepository;
+
+    private Subscription subscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +47,34 @@ public class HospitalsScreen extends AppCompatActivity {
                 //TODO show search screen
             }
         });
+
+        hospitalsRepository = new HospitalsRepository();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        mAdapter.update(Arrays.asList(
-                new Hospital("Newquay Hospital"),
-                new Hospital("Bridgewater Hospital")
-        ));
+        subscription = hospitalsRepository.hospitals()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<Hospital>>() {
+                               @Override
+                               public void call(List<Hospital> hospitals) {
+                                   mAdapter.update(hospitals);
+                               }
+                           },
+                        new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                //TODO inform user that reading hospital failed
+                            }
+                        });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        subscription.unsubscribe();
     }
 }
