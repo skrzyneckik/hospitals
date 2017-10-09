@@ -3,6 +3,7 @@ apply plugin: 'java-library'
 dependencies {
     implementation project(path: ':domain')
     implementation 'io.reactivex:rxjava:1.3.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
 }
 
 sourceCompatibility = "1.7"
