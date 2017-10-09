@@ -12,7 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         tools:title="Loading"
-        tools:subtitle="2080 hospitals" />
+        tools:subtitle="2080 hospitals"
+        android:gravity="right">
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+    </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/hospitals_list"
