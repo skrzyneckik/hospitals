@@ -17,8 +17,10 @@ public class HospitalDetailsScreen extends AppCompatActivity {
 
     private static final String KEY_HOSPITAL = "KEY_HOSPITAL";
 
-    private TextView hospitalNameView;
     private Hospital mHospital;
+
+    private TextView hospitalNameView;
+    private TextView parentODSCodeView;
 
     public static void navigate(@NonNull Context context, @NonNull Hospital hospital) {
         Intent intent = new Intent(context, HospitalDetailsScreen.class);
@@ -39,6 +41,7 @@ public class HospitalDetailsScreen extends AppCompatActivity {
         }
 
         hospitalNameView = findViewById(R.id.organisationName);
+        parentODSCodeView = findViewById(R.id.parentODSCode);
     }
 
     @Override
@@ -47,6 +50,7 @@ public class HospitalDetailsScreen extends AppCompatActivity {
 
         if (mHospital != null) {
             hospitalNameView.setText(mHospital.organisationName());
+            parentODSCodeView.setText(mHospital.parentODSCode());
         }
     }
 }

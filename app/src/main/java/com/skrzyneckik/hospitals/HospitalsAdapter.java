@@ -35,7 +35,8 @@ public class HospitalsAdapter extends RecyclerView.Adapter<HospitalsAdapter.Hosp
     @Override
     public void onBindViewHolder(final HospitalViewHolder holder, int position) {
         final Hospital hospital = mHospitals.get(position);
-        holder.nameView.setText(hospital.organisationName());
+        holder.organisationName.setText(hospital.organisationName());
+        holder.parentODSCode.setText(hospital.parentODSCode());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,11 +57,13 @@ public class HospitalsAdapter extends RecyclerView.Adapter<HospitalsAdapter.Hosp
 
     public static class HospitalViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView nameView;
+        public TextView organisationName;
+        public TextView parentODSCode;
 
         public HospitalViewHolder(View view) {
             super(view);
-            nameView = itemView.findViewById(R.id.hospital_name);
+            organisationName = itemView.findViewById(R.id.organisationName);
+            parentODSCode = itemView.findViewById(R.id.parentODSCode);
         }
     }
 }
