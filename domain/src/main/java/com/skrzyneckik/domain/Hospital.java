@@ -1,9 +1,11 @@
 package com.skrzyneckik.domain;
 
+import java.io.Serializable;
+
 /**
  * {@link Hospital} entity
  */
-public final class Hospital {
+public final class Hospital implements Serializable {
 
     public static final int PARAMS_NUMBER = 22;
 

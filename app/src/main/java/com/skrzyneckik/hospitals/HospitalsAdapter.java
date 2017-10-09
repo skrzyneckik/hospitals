@@ -1,7 +1,5 @@
 package com.skrzyneckik.hospitals;
 
-import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,13 +34,12 @@ public class HospitalsAdapter extends RecyclerView.Adapter<HospitalsAdapter.Hosp
 
     @Override
     public void onBindViewHolder(final HospitalViewHolder holder, int position) {
-        Hospital hospital = mHospitals.get(position);
+        final Hospital hospital = mHospitals.get(position);
         holder.nameView.setText(hospital.organisationName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Context context = holder.itemView.getContext();
-                context.startActivity(new Intent(context, HospitalDetailsScreen.class));
+                HospitalDetailsScreen.navigate(holder.itemView.getContext(), hospital);
             }
         });
     }
