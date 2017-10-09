@@ -27,4 +27,12 @@ public final class Hospital {
     private String email;
     private String website;
     private String fax;
+
+    public Hospital(String organisationName) {
+        this.organisationName = organisationName;
+    }
+
+    public String organisationName() {
+        return organisationName;
+    }
 }
