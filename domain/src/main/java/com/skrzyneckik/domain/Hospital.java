@@ -69,4 +69,19 @@ public final class Hospital implements Serializable {
     private static boolean isEmpty(CharSequence str) {
         return str == null || str.length() == 0;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Hospital hospital = (Hospital) o;
+
+        return organisationID == hospital.organisationID;
+    }
+
+    @Override
+    public int hashCode() {
+        return organisationID;
+    }
 }
