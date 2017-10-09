@@ -70,6 +70,10 @@ public final class Hospital implements Serializable {
         return parentODSCode;
     }
 
+    public String county() {
+        return county;
+    }
+
     private static boolean isEmpty(CharSequence str) {
         return str == null || str.length() == 0;
     }

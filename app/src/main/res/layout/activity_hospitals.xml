@@ -7,8 +7,16 @@
     android:fitsSystemWindows="true"
     tools:context="com.skrzyneckik.hospitals.HospitalsScreen">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        tools:title="Loading"
+        tools:subtitle="2080 hospitals" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/hospitals_list"
+        android:layout_below="@id/toolbar"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

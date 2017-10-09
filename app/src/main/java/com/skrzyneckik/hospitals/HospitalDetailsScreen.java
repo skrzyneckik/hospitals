@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.skrzyneckik.domain.Hospital;
@@ -19,6 +20,7 @@ public class HospitalDetailsScreen extends AppCompatActivity {
 
     private Hospital mHospital;
 
+    private Toolbar mToolbar;
     private TextView hospitalNameView;
     private TextView parentODSCodeView;
 
@@ -32,6 +34,9 @@ public class HospitalDetailsScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hospital_details);
+
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -51,6 +56,8 @@ public class HospitalDetailsScreen extends AppCompatActivity {
         if (mHospital != null) {
             hospitalNameView.setText(mHospital.organisationName());
             parentODSCodeView.setText(mHospital.parentODSCode());
+            mToolbar.setTitle(mHospital.organisationName());
+            mToolbar.setSubtitle(mHospital.county());
         }
     }
 }

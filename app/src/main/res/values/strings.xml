@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">hospitals</string>
+
+    <string name="loading">Loading...</string>
+    <string name="hospitals_title">UK\'s hospitals</string>
+    <string name="hospitals_count">%d hospitals</string>
 </resources>
