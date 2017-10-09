@@ -10,12 +10,14 @@ import android.view.View;
 import com.skrzyneckik.domain.Hospital;
 import com.skrzyneckik.repository.HospitalsRepository;
 
+import java.util.Collections;
 import java.util.List;
 
-import rx.Subscription;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 public class HospitalsScreen extends AppCompatActivity {
 
@@ -25,7 +27,9 @@ public class HospitalsScreen extends AppCompatActivity {
     private FloatingActionButton mSearchButton;
     private HospitalsRepository hospitalsRepository;
 
-    private Subscription subscription;
+    private CompositeSubscription subscriptions;
+
+    List<String> osdCodes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,15 +53,22 @@ public class HospitalsScreen extends AppCompatActivity {
         });
 
         hospitalsRepository = new HospitalsRepository();
+
+        osdCodes = Collections.emptyList();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        subscription = hospitalsRepository.hospitals()
+        subscriptions = new CompositeSubscription();
+
+        Observable<List<Hospital>> hospitals = hospitalsRepository.hospitals()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .share();
+
+        subscriptions.add(hospitals
                 .subscribe(new Action1<List<Hospital>>() {
                                @Override
                                public void call(List<Hospital> hospitals) {
@@ -69,12 +80,22 @@ public class HospitalsScreen extends AppCompatActivity {
                             public void call(Throwable throwable) {
                                 //TODO inform user that reading hospital failed
                             }
-                        });
+                        }));
+
+        subscriptions.add(hospitals
+                .compose(HospitalsRepository.odsCodes())
+                .subscribe(new Action1<List<String>>() {
+                               @Override
+                               public void call(List<String> odsCodes) {
+                                   HospitalsScreen.this.osdCodes = osdCodes;
+                               }
+                           }
+                ));
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        subscription.unsubscribe();
+        subscriptions.unsubscribe();
     }
 }

@@ -67,4 +67,26 @@ public class HospitalsRepository {
                     }
                 });
     }
+
+    public static Observable.Transformer<List<Hospital>, List<String>> odsCodes() {
+        return new Observable.Transformer<List<Hospital>, List<String>>() {
+            @Override
+            public Observable<List<String>> call(Observable<List<Hospital>> listObservable) {
+                return listObservable.flatMap(new Func1<List<Hospital>, Observable<Hospital>>() {
+                    @Override
+                    public Observable<Hospital> call(List<Hospital> hospitals) {
+                        return Observable.from(hospitals);
+                    }
+                })
+                        .map(new Func1<Hospital, String>() {
+                            @Override
+                            public String call(Hospital hospital) {
+                                return hospital.parentODSCode();
+                            }
+                        })
+                        .distinct()
+                        .toList();
+            }
+        };
+    }
 }
